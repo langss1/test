@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure PDF Viewer</title>
+    <style>
+        /* Cegah pemilihan teks */
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Overlay pencegah screenshot */
+        #screenshot-blocker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.01);
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* Styling PDF viewer */
+        #pdf-container {
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="screenshot-blocker"></div>
+    <div id="pdf-container">
+        <iframe id="pdf-viewer" src="" width="100%" height="600px"></iframe>
+    </div>
+
+    <script>
+        // Fungsi pencegahan screenshot
+        function preventScreenshot() {
+            // Nonaktifkan klik kanan
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // Cegah PrintScreen
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'PrintScreen') {
+                    e.preventDefault();
+                    alert('Screenshot tidak diizinkan');
+                }
+            });
+
+            // Nonaktifkan developer tools
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) {
+                    e.preventDefault();
+                }
+            });
+
+            // Tambahkan watermark dinamis
+            function addDynamicWatermark() {
+                const watermarkContainer = document.createElement('div');
+                watermarkContainer.style.position = 'fixed';
+                watermarkContainer.style.top = '50%';
+                watermarkContainer.style.left = '50%';
+                watermarkContainer.style.transform = 'translate(-50%, -50%)';
+                watermarkContainer.style.opacity = '0.1';
+                watermarkContainer.style.fontSize = '50px';
+                watermarkContainer.style.color = 'gray';
+                watermarkContainer.style.pointerEvents = 'none';
+                watermarkContainer.style.zIndex = '9998';
+                watermarkContainer.innerHTML = 'CONFIDENTIAL';
+                document.body.appendChild(watermarkContainer);
+            }
+
+            addDynamicWatermark();
+        }
+
+        // Fungsi untuk memuat PDF
+        function loadPDF(pdfUrl) {
+            const pdfViewer = document.getElementById('pdf-viewer');
+            pdfViewer.src = pdfUrl;
+        }
+
+        // Inisialisasi
+        window.onload = function() {
+            preventScreenshot();
+            // Ganti dengan URL PDF Anda
+            loadPDF('CV ATS.pdf');
+        };
+    </script>
+</body>
+</html>
